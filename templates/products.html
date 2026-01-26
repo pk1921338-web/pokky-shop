@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center fw-bold mb-5">All Products</h1>
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-md-3 col-sm-6">
+            <div class="card h-100 border-0 shadow-sm">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" style="height: 250px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">{{ product.name }}</h5>
+                    <p class="card-text text-muted small">{{ product.description|truncatewords:10 }}</p>
+                    <h5 class="text-danger fw-bold">
+                        {% if product.is_sale %} ₹{{ product.sale_price }} {% else %} ₹{{ product.price }} {% endif %}
+                    </h5>
+                    <a href="{% url 'checkout' product.id %}" class="btn btn-dark w-100 mt-2">Buy Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

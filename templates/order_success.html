@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5 mb-5 text-center">
+    <div class="card shadow-lg p-5 mx-auto" style="max-width: 600px;">
+        <div class="mb-4">
+            <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+        </div>
+        <h2 class="fw-bold text-success">Order Placed Successfully!</h2>
+        <p class="text-muted">Thank you for shopping with Pokky.in</p>
+        
+        <hr class="my-4">
+        
+        <div class="bg-light p-3 rounded mb-4">
+            <h5 class="fw-bold">Order ID: <span class="text-primary">#{{ order.order_id }}</span></h5>
+            <p class="mb-0">Please save this ID for tracking.</p>
+        </div>
+
+        {% if order.qr_code %}
+        <div class="mb-4">
+            <p class="fw-bold mb-2">Your Order QR Code:</p>
+            <img src="{{ order.qr_code.url }}" class="img-fluid border p-2" width="200" alt="Order QR">
+            <p class="small text-muted mt-1">Delivery agent will scan this.</p>
+        </div>
+        {% endif %}
+
+        <div class="d-grid gap-2">
+            <a href="{% url 'products' %}" class="btn btn-dark">Continue Shopping</a>
+            <a href="{% url 'track_order' %}" class="btn btn-outline-dark">Track Order</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

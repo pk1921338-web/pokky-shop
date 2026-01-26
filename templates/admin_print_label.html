@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Order Label #{{ order.tracking_id }}</title>
+    <style>
+        body { font-family: 'Courier New', monospace; width: 400px; margin: 20px auto; border: 2px dashed black; padding: 20px; }
+        .header { text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+        .qr-box { text-align: center; margin: 20px 0; }
+        .details { font-size: 14px; line-height: 1.6; }
+        .bold { font-weight: bold; font-size: 18px; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; }
+        @media print { body { border: none; } }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="header">
+        <h2>POKKY.IN</h2>
+        <p>Pre-Paid / COD Parcel</p>
+    </div>
+
+    <div class="details">
+        <p><strong>To:</strong> {{ order.full_name }}</p>
+        <p>{{ order.address }}</p>
+        <p>{{ order.city }} - {{ order.pincode }}</p>
+        <p><strong>Phone:</strong> {{ order.phone }}</p>
+    </div>
+
+    <div class="qr-box">
+        <img src="{{ order.qr_code.url }}" width="150">
+        <p>Tracking ID: {{ order.tracking_id }}</p>
+    </div>
+
+    <div class="details" style="border-top: 1px solid black; padding-top: 10px;">
+        <p><strong>Item:</strong> {{ order.orderitem_set.first.product.name }}</p>
+        <p><strong>Amount to Collect:</strong> ₹{{ order.total_amount }}</p>
+    </div>
+
+    <div class="footer">
+        <p>Return Address: Pokky HQ, Khalwara Road, Punjab</p>
+    </div>
+</body>
+</html>

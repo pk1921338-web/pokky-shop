@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <h3 class="fw-bold text-center mb-4">Track Your Order</h3>
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Enter Order ID / AWB Number</label>
+                        <input type="text" class="form-control" placeholder="e.g. 7A8B9C...">
+                    </div>
+                    <button type="button" class="btn btn-warning w-100 fw-bold">Track Status</button>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="small text-muted">Tracking feature will be live once connected to Shiprocket.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

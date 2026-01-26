@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold text-primary">1. LOGIN <i class="fas fa-check-circle text-success ms-2"></i></h5>
+                    <small class="text-muted">+91 {{ user.username }} (Logged In)</small>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold">2. DELIVERY ADDRESS</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" name="full_name" class="form-control" id="fname" placeholder="Name" required>
+                                    <label for="fname">Full Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" name="phone" class="form-control" id="phone" placeholder="Phone" required>
+                                    <label for="phone">Phone Number</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea name="address" class="form-control" placeholder="Address" id="addr" style="height: 100px" required></textarea>
+                                    <label for="addr">Flat, House no., Building, Company, Apartment</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" name="city" class="form-control" id="city" placeholder="City" required>
+                                    <label for="city">City / District</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" name="pincode" class="form-control" id="pin" placeholder="Pin" required>
+                                    <label for="pin">Pincode</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 btn-lg mt-4 fw-bold shadow-sm">
+                            DELIVER HERE & CONTINUE
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="text-muted mb-0 fw-bold">PRICE DETAILS</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Price (1 item)</span>
+                        <span>₹{{ product.price }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 text-success">
+                        <span>Discount</span>
+                        <span>- ₹{% widthratio product.price 10 2 %}</span> </div>
+                    <div class="d-flex justify-content-between border-top pt-3 fw-bold fs-5">
+                        <span>Total Payable</span>
+                        <span>₹{% if product.is_sale %}{{ product.sale_price }}{% else %}{{ product.price }}{% endif %}</span>
+                    </div>
+                    <div class="mt-3 text-center">
+                         <img src="{{ product.image.url }}" class="img-thumbnail" width="80">
+                         <p class="small text-muted mt-1">{{ product.name }}</p>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <small class="text-secondary"><i class="fas fa-shield-alt text-secondary"></i> Safe and Secure Payments. 100% Authentic products.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
