@@ -64,18 +64,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pokky_main.wsgi.application'
 
-# --- DATABASE CONFIGURATION (NEON DB / POSTGRESQL FIX) ---
-# Ye sabse important part hai. Ye check karega:
-# 1. Agar Render par DATABASE_URL hai (Neon DB), to use connect karega.
-# 2. Agar Laptop par hai, to SQLite use karega.
-DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,  # <--- NEON DB ke liye ye ZAROORI hai
-    )
-}
+# --- DATABASE CONFIGURATION (Smart Fix) ---
+# Ye check karega ki kya hum Render par hain?
+if 'DATABASE_URL' in os.environ:
+    # RENDER / NEON DB (PostgreSQL) - Yahan SSL zaroori hai
+    DATABASES = {
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        )
+    }
+else:
+    # LOCAL LAPTOP (SQLite) - Yahan SSL nahi chahiye
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # --- PASSWORD VALIDATION ---
 AUTH_PASSWORD_VALIDATORS = [
