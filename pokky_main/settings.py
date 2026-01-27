@@ -1,25 +1,22 @@
-"""
-Django settings for pokky_main project.
-Updated for Render Deployment.
-"""
 from pathlib import Path
 import os
-import dj_database_url  # Render Database ke liye
-from decouple import config # .env file read karne ke liye
+import dj_database_url  # Database connection ke liye
+from decouple import config # Environment variables padhne ke liye
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security Settings
-# SECRET_KEY Render ke environment variable se aayega, warna default use karega
+# --- SECURITY SETTINGS ---
+# SECRET_KEY Render ke environment variable se aayega, warna local default use karega
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-default-key-check-env')
 
-# DEBUG: Render par False hona chahiye, Local par True
+# DEBUG: Render par False hona chahiye (Environment variable se set hoga)
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['*'] # Sabhi domains allow karein (Render/Hostinger ke liye)
+# Allowed Hosts: Render aur sabhi domains ke liye allow kiya hai
+ALLOWED_HOSTS = ['*']
 
-# Application definition
+# --- APPLICATION DEFINITION ---
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,12 +24,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'store', # AAPKA T-SHIRT APP
+    'store', # AAPKA MAIN APP
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # <--- NEW: CSS dikhane ke liye zaroori
+    'whitenoise.middleware.WhiteNoiseMiddleware', # <--- CSS/Images ke liye ZAROORI (Render par)
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -46,7 +43,7 @@ ROOT_URLCONF = 'pokky_main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')], # TEMPLATES FOLDER LINK
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Templates folder ka path
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -61,16 +58,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pokky_main.wsgi.application'
 
-# --- DATABASE CONFIGURATION (SMART SWITCH) ---
-# Agar Render par hai to 'DATABASE_URL' milega, warna local SQLite use karega.
+# --- DATABASE CONFIGURATION (NEON DB / POSTGRESQL FIX) ---
+# Ye sabse important part hai. Ye check karega:
+# 1. Agar Render par DATABASE_URL hai (Neon DB), to use connect karega.
+# 2. Agar Laptop par hai, to SQLite use karega.
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'),
-        conn_max_age=600
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True,  # <--- NEON DB ke liye ye ZAROORI hai
     )
 }
 
-# Password validation
+# --- PASSWORD VALIDATION ---
 AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
     { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
@@ -78,37 +79,40 @@ AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
-# Internationalization
+# --- INTERNATIONALIZATION ---
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata' # India ka time zone set kiya hai (Optional)
 USE_I18N = True
 USE_TZ = True
 
-# --- STATIC FILES (CSS, JS, IMAGES) ---
+# --- STATIC FILES (CSS, JavaScript, Images) ---
 STATIC_URL = 'static/'
 
-# Render ke liye Static Root set karna zaroori hai (Jahan collectstatic file jama karega)
+# Render ke liye Static Root (Jahan file jama hongi)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Local development ke liye folders
+# Local development ke liye folder
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Production Storage (WhiteNoise)
+# WhiteNoise Storage (Compression ke liye taaki site fast chale)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media Files (Product Images ke liye)
+# --- MEDIA FILES (Product Images) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# --- RENDER SPECIFIC SETTINGS ---
-# Isse Login/Order form me 'CSRF Failed' ka error nahi aayega
+
+# --- RENDER & SECURITY SETTINGS ---
+# CSRF Error hatane ke liye
 CSRF_TRUSTED_ORIGINS = [
-    'https://*.onrender.com',  # Render ke sabhi domains ko trust karega
-    'https://pokky-store.onrender.com' # Aapka specific URL (Baad me change kar sakte hain)
+    'https://*.onrender.com', # Render ke sabhi subdomains allow karega
+    'https://pokky-shop.onrender.com',
 ]
+
 # --- LIFETIME LOGIN SETTINGS ---
 # User tab tak login rahega jab tak wo khud Logout nahi dabata
 SESSION_COOKIE_AGE = 31536000 * 20  # 20 Saal (Seconds mein)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False # Browser band karne par bhi logout nahi hoga
-SESSION_SAVE_EVERY_REQUEST = True # Har request par session renew hoga
+SESSION_SAVE_EVERY_REQUEST = True # Har click par session renew hoga

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-dark text-white rounded">
+        <h3 class="fw-bold m-0">👑 Owner Control Panel</h3>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#orders">📦 Manage Orders</button></li>
+        <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#products">👕 Manage Products</button></li>
+    </ul>
+
+    <div class="tab-content p-3 bg-white border border-top-0 shadow-sm">
+        
+        <div class="tab-pane fade show active" id="orders">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Print</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.order_id }}</td>
+                        <td>{{ order.full_name }}<br><small class="text-muted">{{ order.phone }}</small></td>
+                        <td>₹{{ order.total_amount }}</td>
+                        <td>
+                            <span class="badge {% if order.status == 'Delivered' %}bg-success{% elif order.status == 'Cancelled' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if order.status == 'Pending' %}
+                                <a href="{% url 'update_status' order.id 'Accepted' %}" class="btn btn-success btn-sm">Accept</a>
+                                <a href="{% url 'update_status' order.id 'Cancelled' %}" class="btn btn-outline-danger btn-sm">Reject</a>
+                            {% elif order.status == 'Accepted' %}
+                                <a href="{% url 'update_status' order.id 'Shipped' %}" class="btn btn-primary btn-sm">Ship Now</a>
+                            {% elif order.status == 'Shipped' %}
+                                <a href="{% url 'update_status' order.id 'Delivered' %}" class="btn btn-success btn-sm">Mark Delivered</a>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if order.status != 'Pending' and order.status != 'Cancelled' %}
+                            <a href="{% url 'admin_print_label' order.id %}" target="_blank" class="btn btn-dark btn-sm"><i class="fas fa-print"></i> Label</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="products">
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/admin/store/product/add/" target="_blank" class="btn btn-primary">+ Add New Product</a>
+            </div>
+            <table class="table table-bordered">
+                <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for p in products %}
+                    <tr>
+                        <td><img src="{{ p.image.url }}" width="50"></td>
+                        <td>{{ p.name }}</td>
+                        <td>₹{{ p.price }}</td>
+                        <td>
+                            <a href="{% url 'delete_product' p.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Delete pakka?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

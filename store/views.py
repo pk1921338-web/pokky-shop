@@ -196,3 +196,34 @@ def shiprocket_webhook(request):
             return JsonResponse({'status': 'error'}, status=400)
             
     return JsonResponse({'status': 'invalid method'})
+# --- CUSTOM OWNER DASHBOARD ---
+@login_required
+def owner_dashboard(request):
+    # SECURITY: Sirf Superuser hi andar aa sake
+    if not request.user.is_superuser:
+        return redirect('index') 
+    
+    orders = Order.objects.all().order_by('-created_at')
+    products = Product.objects.all().order_by('-id')
+    
+    return render(request, 'owner_dashboard.html', {
+        'orders': orders, 
+        'products': products
+    })
+
+@login_required
+def update_order_status(request, order_id, new_status):
+    if not request.user.is_superuser: return redirect('index')
+    
+    order = get_object_or_404(Order, id=order_id)
+    order.status = new_status
+    order.save()
+    return redirect('owner_dashboard')
+
+@login_required
+def delete_product(request, product_id):
+    if not request.user.is_superuser: return redirect('index')
+    
+    product = get_object_or_404(Product, id=product_id)
+    product.delete()
+    return redirect('owner_dashboard')

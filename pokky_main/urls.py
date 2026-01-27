@@ -30,6 +30,11 @@ urlpatterns = [
     path('admin/print-label/<int:order_id>/', views.admin_print_label, name='admin_print_label'),
     path('webhook/shiprocket/', views.shiprocket_webhook, name='shiprocket_webhook'),
     path('my-orders/<int:order_id>/', views.user_order_detail, name='user_order_detail'),
+    
+    # URLs.py mein jodein
+    path('secret-owner-panel-999/', views.owner_dashboard, name='owner_dashboard'),
+    path('update-status/<int:order_id>/<str:new_status>/', views.update_order_status, name='update_status'),
+    path('delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
 ]
 
 if settings.DEBUG:
