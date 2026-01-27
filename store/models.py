@@ -91,3 +91,12 @@ def save_user_profile(sender, instance, **kwargs):
     except ObjectDoesNotExist:
         # Agar profile nahi mili (Error aaya), to nayi bana do!
         Profile.objects.create(user=instance)
+        
+        # --- RENDER CSRF FIX (Zaroori Hai) ---
+CSRF_TRUSTED_ORIGINS = [
+    'https://pokky-shop.onrender.com', # Aapki site ka link
+    'https://*.onrender.com',          # Render ke sabhi links
+]
+
+# Render proxy use karta hai, isliye HTTPS trust karne ke liye ye line chahiye:
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
