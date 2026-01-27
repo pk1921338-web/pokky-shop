@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
+from django.db.models import Q  # <--- Search ke liye zaroori
 import json
 
 # --- PUBLIC PAGES ---
@@ -118,9 +119,62 @@ def admin_print_label(request, order_id):
     return render(request, 'admin_print_label.html', {'order': order})
 
 def track_order(request):
+    # Professional Timeline Logic Added
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        try:
+            # Order ID ya AWB kisi se bhi search kare
+            order = Order.objects.get(Q(order_id=order_id) | Q(awb_code=order_id))
+            
+            # Timeline Logic (Progress Bar ke liye)
+            status_list = ['Pending', 'Accepted', 'Packed', 'Shipped', 'Delivered']
+            current_status = order.status
+            
+            # Step calculate karna (e.g. Shipped hai to step=4)
+            step = 0
+            if current_status in status_list:
+                step = status_list.index(current_status) + 1
+            elif current_status == 'Cancelled':
+                step = -1
+                
+            return render(request, 'track_order.html', {'order': order, 'step': step})
+            
+        except Order.DoesNotExist:
+            messages.error(request, "Order ID not found. Please check and try again.")
+            
     return render(request, 'track_order.html')
 
+# --- SHIPROCKET AUTOMATIC UPDATE ---
 @csrf_exempt
 def shiprocket_webhook(request):
-    # (Pichla wala same webhook code yahan rakhein)
-    return JsonResponse({'status': 'ok'})
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            # Shiprocket data fields
+            awb = data.get('awb', None)
+            current_status = data.get('current_status', '').lower()
+            
+            if awb:
+                try:
+                    order = Order.objects.get(awb_code=awb)
+                    
+                    # Status Update Logic
+                    if 'shipped' in current_status:
+                        order.status = 'Shipped'
+                    elif 'delivered' in current_status:
+                        order.status = 'Delivered'
+                    elif 'cancelled' in current_status:
+                        order.status = 'Cancelled'
+                    
+                    order.save()
+                    print(f"WEBHOOK: Order {order.order_id} updated to {order.status}")
+                    
+                except Order.DoesNotExist:
+                    print(f"WEBHOOK: Order not found for AWB {awb}")
+
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            print("Webhook Error:", e)
+            return JsonResponse({'status': 'error'}, status=400)
+            
+    return JsonResponse({'status': 'invalid method'})

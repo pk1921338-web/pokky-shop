@@ -107,3 +107,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',  # Render ke sabhi domains ko trust karega
     'https://pokky-store.onrender.com' # Aapka specific URL (Baad me change kar sakte hain)
 ]
+# --- LIFETIME LOGIN SETTINGS ---
+# User tab tak login rahega jab tak wo khud Logout nahi dabata
+SESSION_COOKIE_AGE = 31536000 * 20  # 20 Saal (Seconds mein)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False # Browser band karne par bhi logout nahi hoga
+SESSION_SAVE_EVERY_REQUEST = True # Har request par session renew hoga
