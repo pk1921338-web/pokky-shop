@@ -117,15 +117,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --- RENDER & SECURITY SETTINGS ---
-# CSRF Error hatane ke liye
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.onrender.com', # Render ke sabhi subdomains allow karega
-    'https://pokky-shop.onrender.com',
-]
-
 # --- LIFETIME LOGIN SETTINGS ---
 # User tab tak login rahega jab tak wo khud Logout nahi dabata
 SESSION_COOKIE_AGE = 31536000 * 20  # 20 Saal (Seconds mein)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False # Browser band karne par bhi logout nahi hoga
 SESSION_SAVE_EVERY_REQUEST = True # Har click par session renew hoga
+
+# --- SECURITY & RENDER SETTINGS ---
+
+# 1. Isme 'https://' hona zaroori hai
+CSRF_TRUSTED_ORIGINS = [
+    'https://pokky-shop.onrender.com',  # Aapki exact site URL
+    'https://*.onrender.com',           # Render ke liye wildcard
+]
+
+# 2. Render Proxy Fix (Ye line bahut zaroori hai)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# 3. Cookie Settings
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
