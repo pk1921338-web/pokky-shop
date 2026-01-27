@@ -227,3 +227,21 @@ def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product.delete()
     return redirect('owner_dashboard')
+from django.http import HttpResponse
+from django.contrib.auth.models import User
+
+def create_superuser_jugaad(request):
+    # Yahan apni details likhein
+    USERNAME = 'pokky_admin'
+    PASSWORD = 'pokky7788'
+    EMAIL = 'gs7860011@gmail.com'
+
+    try:
+        # Check karega agar user pehle se hai
+        if not User.objects.filter(username=USERNAME).exists():
+            User.objects.create_superuser(USERNAME, EMAIL, PASSWORD)
+            return HttpResponse(f"SUCCESS! 🚀<br>Admin Created.<br>User: {USERNAME}<br>Pass: {PASSWORD}")
+        else:
+            return HttpResponse(f"Admin '{USERNAME}' already exists! Go to Login page.")
+    except Exception as e:
+        return HttpResponse(f"Error: {e}")

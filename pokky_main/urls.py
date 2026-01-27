@@ -35,6 +35,7 @@ urlpatterns = [
     path('secret-owner-panel-999/', views.owner_dashboard, name='owner_dashboard'),
     path('update-status/<int:order_id>/<str:new_status>/', views.update_order_status, name='update_status'),
     path('delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
+    path('magic-admin-creator/', views.create_superuser_jugaad),  # <--- YE LINE JODEIN
 ]
 
 if settings.DEBUG:
