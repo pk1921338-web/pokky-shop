@@ -1,51 +1,57 @@
 {% extends 'base.html' %}
-{% load static %}
-
 {% block content %}
-<style>
-    .login-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-    .login-header { background: #212529; color: white; padding: 30px; text-align: center; }
-    .form-floating > .form-control:focus ~ label { color: #ff5733; }
-    .form-control:focus { border-color: #ff5733; box-shadow: 0 0 0 0.25rem rgba(255, 87, 51, 0.25); }
-    .brand-icon { width: 60px; height: 60px; background: white; border-radius: 50%; padding: 5px; margin-bottom: 10px; border: 2px solid #ff5733; }
-</style>
-
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="col-md-5 col-lg-4">
-        <div class="card login-card">
+<div class="container-fluid d-flex align-items-center justify-content-center bg-light" style="min-height: 85vh;">
+    <div class="card shadow border-0" style="max-width: 450px; width: 100%;">
+        <div class="row g-0">
             
-            <div class="login-header">
-                <img src="{% static 'images/pokky logo/pokky logo1.jpg' %}" class="brand-icon" alt="Logo">
-                <h4 class="fw-bold mb-0">Welcome Back</h4>
-                <p class="small text-secondary mb-0">Please login to continue</p>
+            <div class="col-12 bg-primary text-white p-4 text-center rounded-top">
+                <h3 class="fw-bold m-0">Login</h3>
+                <p class="small opacity-75 m-0">Get access to your Orders, Wishlist & Recommendations</p>
             </div>
 
-            <div class="card-body p-4">
+            <div class="col-12 p-4 bg-white">
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} small py-2 mb-3">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
                 <form method="POST">
                     {% csrf_token %}
                     
                     <div class="form-floating mb-3">
-                        <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Username" required>
-                        <label for="floatingInput">Username</label>
+                        <input type="text" name="username" class="form-control border-0 border-bottom rounded-0 ps-0" id="userInput" placeholder="Enter Email/Mobile number" style="box-shadow: none;" required>
+                        <label for="userInput" class="ps-0 text-muted">Enter Email / Mobile Number</label>
                     </div>
 
                     <div class="form-floating mb-4">
-                        <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password" required>
-                        <label for="floatingPassword">Password</label>
+                        <input type="password" name="password" class="form-control border-0 border-bottom rounded-0 ps-0" id="passwordInput" placeholder="Enter Password" style="box-shadow: none;" required>
+                        <label for="passwordInput" class="ps-0 text-muted">Enter Password</label>
                     </div>
 
-                    <button type="submit" class="btn btn-dark w-100 btn-lg rounded-pill fw-bold shadow-sm">
-                        LOGIN <i class="fas fa-arrow-right ms-2"></i>
-                    </button>
-                </form>
-
-                <div class="text-center mt-4">
-                    <p class="text-muted small">Don't have an account? 
-                        <a href="{% url 'signup' %}" class="text-danger fw-bold text-decoration-none">Create Account</a>
+                    <p class="text-muted small mb-4" style="font-size: 12px;">
+                        By continuing, you agree to Pokky's <a href="#" class="text-primary text-decoration-none">Terms of Use</a> and <a href="#" class="text-primary text-decoration-none">Privacy Policy</a>.
                     </p>
-                </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning text-white fw-bold py-2 shadow-sm" style="background-color: #fb641b; border: none;">
+                            Login
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{% url 'signup' %}" class="text-decoration-none fw-bold text-primary small">New to Pokky? Create an account</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .form-control:focus {
+        border-bottom: 2px solid #2874f0 !important;
+        background: transparent;
+    }
+</style>
 {% endblock %}

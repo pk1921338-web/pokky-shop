@@ -27,6 +27,12 @@ INSTALLED_APPS = [
     'store', # AAPKA MAIN APP
 ]
 
+# --- CUSTOM AUTHENTICATION (Login with Email/Phone) ---
+AUTHENTICATION_BACKENDS = [
+    'store.backends.EmailPhoneBackend',  # Hamara naya code pehle chalega
+    'django.contrib.auth.backends.ModelBackend', # Default wala backup ke liye
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', # <--- CSS/Images ke liye ZAROORI (Render par)
