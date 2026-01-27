@@ -29,6 +29,7 @@ urlpatterns = [
     path('track/', views.track_order, name='track_order'),
     path('admin/print-label/<int:order_id>/', views.admin_print_label, name='admin_print_label'),
     path('webhook/shiprocket/', views.shiprocket_webhook, name='shiprocket_webhook'),
+    path('my-orders/<int:order_id>/', views.user_order_detail, name='user_order_detail'),
 ]
 
 if settings.DEBUG:

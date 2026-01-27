@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .track-line { position: relative; height: 4px; background: #ddd; margin-top: 20px; border-radius: 10px; }
+    .track-fill { height: 100%; background: #26a541; transition: width 0.5s; border-radius: 10px; }
+    .dot-box { display: flex; justify-content: space-between; position: relative; top: -14px; }
+    .track-dot { width: 20px; height: 20px; background: #ddd; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .track-dot.active { background: #26a541; transform: scale(1.2); }
+    .status-text { font-size: 12px; margin-top: 5px; color: #878787; text-align: center; width: 60px; margin-left: -20px; }
+    .status-text.active { color: #26a541; font-weight: bold; }
+</style>
+
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="fw-bold">Order ID: {{ order.order_id }}</h6>
+                        {% if order.status != 'Cancelled' %}
+                            <a href="https://wa.me/917888563884?text=Need help with Order {{ order.order_id }}" class="text-primary text-decoration-none fw-bold"><i class="fab fa-whatsapp"></i> Need Help?</a>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex mt-3 align-items-center">
+                        <img src="{{ order.orderitem_set.first.product.image.url }}" width="80" class="border rounded p-1">
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">{{ order.orderitem_set.first.product.name }}</h5>
+                            <p class="text-muted small mb-0">Qty: {{ order.orderitem_set.first.quantity }} | ₹{{ order.orderitem_set.first.price }}</p>
+                            <h5 class="mt-1 fw-bold">₹{{ order.total_amount }}</h5>
+                        </div>
+                    </div>
+
+                    {% if order.status == 'Cancelled' %}
+                        <div class="alert alert-danger mt-4 fw-bold"><i class="fas fa-times-circle"></i> This Order was Cancelled.</div>
+                    {% else %}
+                        <div class="mt-5 mx-3">
+                            <div class="track-line">
+                                <div class="track-fill" style="width: {% widthratio step 5 100 %}%;"></div>
+                            </div>
+                            <div class="dot-box">
+                                <div><div class="track-dot {% if step >= 1 %}active{% endif %}"></div><div class="status-text {% if step >= 1 %}active{% endif %}">Ordered</div></div>
+                                <div><div class="track-dot {% if step >= 2 %}active{% endif %}"></div><div class="status-text {% if step >= 2 %}active{% endif %}">Accepted</div></div>
+                                <div><div class="track-dot {% if step >= 3 %}active{% endif %}"></div><div class="status-text {% if step >= 3 %}active{% endif %}">Packed</div></div>
+                                <div><div class="track-dot {% if step >= 4 %}active{% endif %}"></div><div class="status-text {% if step >= 4 %}active{% endif %}">Shipped</div></div>
+                                <div><div class="track-dot {% if step >= 5 %}active{% endif %}"></div><div class="status-text {% if step >= 5 %}active{% endif %}">Delivered</div></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3">Delivery Address</h6>
+                    <h6 class="fw-bold">{{ order.full_name }}</h6>
+                    <p class="text-muted mb-1">{{ order.address }}</p>
+                    <p class="text-muted">{{ order.city }} - {{ order.pincode }}</p>
+                    <p class="fw-bold"><i class="fas fa-phone-alt"></i> {{ order.phone }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                     <a href="{% url 'checkout' order.orderitem_set.first.product.id %}" class="btn btn-warning w-100 fw-bold btn-lg">
+                        <i class="fas fa-shopping-cart"></i> Buy Again
+                    </a>
+                    {% if order.status == 'Pending' %}
+                        <a href="{% url 'cancel_order' order.id %}" class="btn btn-outline-danger w-100 mt-2 fw-bold" onclick="return confirm('Are you sure?')">Cancel Order</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-bold">Price Details</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>List Price</span>
+                        <span class="text-decoration-line-through">₹{% widthratio order.total_amount 8 10 %}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Selling Price</span>
+                        <span>₹{{ order.total_amount }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Delivery Fee</span>
+                        <span>FREE</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total Amount</span>
+                        <span>₹{{ order.total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

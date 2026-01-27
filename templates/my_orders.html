@@ -1,44 +1,86 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5">
-    <h3 class="fw-bold mb-4">My Orders</h3>
+<div class="container mt-5" style="min-height: 70vh;">
+    <h3 class="fw-bold mb-4"><i class="fas fa-box-open text-primary me-2"></i>My Orders</h3>
+    
     <div class="row">
         {% for order in orders %}
         <div class="col-12 mb-3">
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 h-100" style="transition: 0.3s; cursor: pointer;" onclick="window.location.href='{% url 'user_order_detail' order.id %}'">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 class="fw-bold text-primary">Order #{{ order.order_id }}</h5>
+                            <h5 class="fw-bold text-primary mb-1">
+                                Order #{{ order.order_id }} 
+                                <i class="fas fa-chevron-right text-muted small ms-2"></i>
+                            </h5>
                             <p class="text-muted mb-1 small">Ordered on {{ order.created_at|date:"d M Y" }}</p>
-                            <span class="badge {% if order.status == 'Delivered' %}bg-success{% elif order.status == 'Cancelled' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
-                                {{ order.status }}
+                            
+                            <span class="badge rounded-pill px-3 py-2 
+                                {% if order.status == 'Delivered' %}bg-success
+                                {% elif order.status == 'Cancelled' %}bg-danger
+                                {% elif order.status == 'Shipped' %}bg-info text-dark
+                                {% else %}bg-warning text-dark{% endif %}">
+                                <i class="fas fa-circle small me-1"></i> {{ order.status }}
                             </span>
                         </div>
+                        
                         <div class="text-end">
-                            <h5 class="fw-bold">₹{{ order.total_amount }}</h5>
+                            <h5 class="fw-bold text-dark">₹{{ order.total_amount }}</h5>
+                            
                             {% if order.status == 'Pending' or order.status == 'Accepted' %}
-                            <a href="{% url 'cancel_order' order.id %}" class="btn btn-outline-danger btn-sm mt-2" onclick="return confirm('Are you sure?')">Cancel Order</a>
+                            <a href="{% url 'cancel_order' order.id %}" class="btn btn-outline-danger btn-sm mt-2 rounded-pill fw-bold" onclick="event.stopPropagation(); return confirm('Are you sure you want to cancel this order?')">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
                             {% endif %}
                         </div>
                     </div>
-                    <hr>
+                    
+                    <hr class="my-3">
+                    
                     <div class="d-flex align-items-center">
-                        <img src="{{ order.orderitem_set.first.product.image.url }}" width="60" class="rounded border me-3">
-                        <div>
-                            <h6 class="mb-0">{{ order.orderitem_set.first.product.name }}</h6>
-                            <small>Qty: {{ order.orderitem_set.first.quantity }}</small>
+                        <div class="position-relative">
+                            <img src="{{ order.orderitem_set.first.product.image.url }}" width="70" height="70" class="rounded border p-1 object-fit-cover">
+                            {% if order.orderitem_set.count > 1 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                                +{{ order.orderitem_set.count|add:"-1" }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1 fw-bold text-dark">{{ order.orderitem_set.first.product.name }}</h6>
+                            <p class="text-muted small mb-0">Qty: {{ order.orderitem_set.first.quantity }}</p>
+                            <small class="text-primary fw-bold">View Details <i class="fas fa-arrow-right ms-1"></i></small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         {% empty %}
-        <div class="text-center py-5">
-            <h4>No orders yet!</h4>
-            <a href="{% url 'products' %}" class="btn btn-primary mt-3">Start Shopping</a>
+        <div class="col-12 text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-shopping-basket text-muted" style="font-size: 80px; opacity: 0.3;"></i>
+            </div>
+            <h4 class="fw-bold text-muted">No orders yet!</h4>
+            <p class="text-secondary">Looks like you haven't placed any orders yet.</p>
+            <a href="{% url 'products' %}" class="btn btn-dark btn-lg rounded-pill px-5 shadow mt-3">
+                Start Shopping
+            </a>
         </div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseover', () => {
+            card.classList.add('shadow');
+            card.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseout', () => {
+            card.classList.remove('shadow');
+            card.style.transform = 'translateY(0)';
+        });
+    });
+</script>
 {% endblock %}

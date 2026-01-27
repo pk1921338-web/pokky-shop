@@ -144,6 +144,24 @@ def track_order(request):
             
     return render(request, 'track_order.html')
 
+# --- ORDER DETAIL PAGE (Flipkart Style) ---
+@login_required
+def user_order_detail(request, order_id):
+    # Sirf wahi user dekh paye jisne order kiya hai
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    # Timeline Logic (Green Bar ke liye)
+    status_list = ['Pending', 'Accepted', 'Packed', 'Shipped', 'Delivered']
+    current_status = order.status
+    step = 0
+    
+    if current_status in status_list:
+        step = status_list.index(current_status) + 1
+    elif current_status == 'Cancelled':
+        step = -1
+        
+    return render(request, 'user_order_detail.html', {'order': order, 'step': step})
+
 # --- SHIPROCKET AUTOMATIC UPDATE ---
 @csrf_exempt
 def shiprocket_webhook(request):
