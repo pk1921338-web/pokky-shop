@@ -2,72 +2,73 @@
 {% load static %}
 
 {% block content %}
-<style>
-    .banner { background: white; padding: 80px 0; }
-    .hero-btn { background-color: #ff5733; color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; }
-    .hero-btn:hover { background-color: #d84323; color: white; transform: translateY(-3px); }
-    .product-card { border: none; transition: 0.3s; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-    .product-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-</style>
 
-<section class="banner">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-4">
-                <h1 class="display-3 fw-bold mb-3">Wear Your Vibe with <span style="color: #ff5733;">Pokky.in</span></h1>
-                <p class="lead text-muted mb-4">Discover the most comfortable oversized t-shirts and customized gifts designed just for you.</p>
-                <a href="{% url 'products' %}" class="hero-btn shadow">Shop Now <i class="fas fa-shopping-bag ms-2"></i></a>
-            </div>
-            <div class="col-lg-6 text-center">
-                <img src="{% static 'images/pokky logo/pokky pic.jpg' %}" class="img-fluid rounded-4 shadow-lg" alt="Pokky Banner" style="max-height: 400px;">
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="height: 85vh;">
+            <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1920&auto=format&fit=crop" class="d-block w-100 h-100" style="object-fit: cover; filter: brightness(0.6);" alt="Streetwear">
+            <div class="carousel-caption d-flex flex-column justify-content-center align-items-center h-100">
+                <h1 class="display-1 fw-bold text-uppercase" style="font-family: 'Teko', sans-serif; letter-spacing: 5px;">Urban Legacy</h1>
+                <p class="lead mb-4 text-white-50">Premium Cotton. Oversized Fits. Designed for India.</p>
+                <a href="#" class="btn btn-primary btn-lg px-5 py-3 rounded-0">Shop The Drop</a>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<section class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">New Arrivals 🔥</h2>
-        <a href="{% url 'products' %}" class="text-decoration-none text-dark fw-bold">View All <i class="fas fa-arrow-right"></i></a>
-    </div>
-
+<div class="container my-5 py-5">
     <div class="row g-4">
-        {% for product in products %}
-        <div class="col-md-3 col-sm-6">
-            <div class="product-card h-100">
-                <div style="position: relative;">
-                    {% if product.image %}
-                    <img src="{{ product.image.url }}" class="w-100" style="height: 280px; object-fit: cover;" alt="{{ product.name }}">
-                    {% else %}
-                    <img src="https://via.placeholder.com/300" class="w-100" style="height: 280px; object-fit: cover;">
-                    {% endif %}
-                    
-                    {% if product.is_sale %}
-                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">SALE</span>
-                    {% endif %}
-                </div>
-                
-                <div class="p-3 text-center">
-                    <h5 class="fw-bold mb-1">{{ product.name }}</h5>
-                    <div class="mb-3">
-                        {% if product.is_sale %}
-                            <span class="text-muted text-decoration-line-through me-2">₹{{ product.price }}</span>
-                            <span class="text-danger fw-bold fs-5">₹{{ product.sale_price }}</span>
-                        {% else %}
-                            <span class="fw-bold fs-5">₹{{ product.price }}</span>
-                        {% endif %}
+        <div class="col-md-6">
+            <div class="card bg-dark text-white border-0 overflow-hidden position-relative">
+                <img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=600&auto=format&fit=crop" class="card-img" style="opacity: 0.7; height: 400px; object-fit: cover;">
+                <div class="card-img-overlay d-flex align-items-end p-4">
+                    <div>
+                        <h2 class="fw-bold text-uppercase" style="font-family: 'Teko';">Graphic Tees</h2>
+                        <a href="#" class="text-white text-decoration-none fw-bold">Explore Collection <i class="fas fa-arrow-right ms-2"></i></a>
                     </div>
-                    <a href="{% url 'checkout' product.id %}" class="btn btn-outline-dark w-100 rounded-pill btn-sm">
-    <i class="fas fa-shopping-bag me-1"></i> Buy Now
-</a>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <div class="alert alert-light border">No products found.</div>
+        <div class="col-md-6">
+            <div class="card bg-dark text-white border-0 overflow-hidden position-relative">
+                <img src="https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=600&auto=format&fit=crop" class="card-img" style="opacity: 0.7; height: 400px; object-fit: cover;">
+                <div class="card-img-overlay d-flex align-items-end p-4">
+                    <div>
+                        <h2 class="fw-bold text-uppercase" style="font-family: 'Teko';">Bottom Wear</h2>
+                        <a href="#" class="text-white text-decoration-none fw-bold">Shop Pants <i class="fas fa-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-uppercase fw-bold m-0" style="font-family: 'Teko'; font-size: 32px;">Trending Now</h3>
+        <a href="#" class="btn btn-outline-light btn-sm rounded-0">View All</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for i in "1234" %}
+        <div class="col">
+            <div class="card h-100 bg-transparent border-0">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&auto=format&fit=crop" class="card-img-top rounded-0" alt="Product">
+                    <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 small fw-bold m-2">SALE</span>
+                </div>
+                <div class="card-body px-0">
+                    <h6 class="card-title text-white mb-1">Dragon Ball Z - Goku Edit.</h6>
+                    <p class="text-muted small mb-2">Oversized T-shirt</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-white">₹799</span>
+                        <button class="btn btn-sm btn-light rounded-0"><i class="fas fa-shopping-cart"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>
-</section>
+</div>
+
 {% endblock %}
